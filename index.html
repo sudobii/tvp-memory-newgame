@@ -86,6 +86,100 @@ body {
   transform: scale(0.96);
 }
 
+.btn-sm {
+  padding: 10px 24px;
+  font-size: 0.9rem;
+}
+
+.btn-danger {
+  border-color: #FF6B6B;
+  color: #FF6B6B;
+  background: rgba(255, 107, 107, 0.1);
+  box-shadow: 0 0 15px rgba(255, 107, 107, 0.2);
+  text-shadow: 0 0 8px rgba(255, 107, 107, 0.5);
+}
+
+/* ============ 规则页 ============ */
+#rules-screen {
+  text-align: center;
+  padding: 20px 16px;
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
+}
+
+.rules-content {
+  max-width: 340px;
+  width: 100%;
+}
+
+.rules-title {
+  font-size: clamp(1.4rem, 5.5vw, 1.8rem);
+  color: #FFE156;
+  margin-bottom: 20px;
+  text-shadow: 0 0 10px #D4A853;
+}
+
+.rules-card {
+  background: linear-gradient(145deg, #0F1A2E, #1A2744);
+  border: 2px solid #D4A853;
+  border-radius: 10px;
+  padding: 18px 16px;
+  margin-bottom: 16px;
+  text-align: left;
+  box-shadow: 0 0 15px rgba(212, 168, 83, 0.15);
+}
+
+.rules-card h3 {
+  color: #FFE156;
+  font-size: 0.95rem;
+  margin-bottom: 10px;
+  text-shadow: 0 0 8px #D4A853;
+}
+
+.rules-list {
+  list-style: none;
+  padding: 0;
+}
+
+.rules-list li {
+  color: #ddd;
+  font-size: 0.82rem;
+  line-height: 1.8;
+  padding-left: 1.2em;
+  position: relative;
+}
+
+.rules-list li::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 0.7em;
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: #D4A853;
+}
+
+.rules-highlight {
+  background: rgba(255, 60, 60, 0.15);
+  border: 1px solid rgba(255, 100, 100, 0.4);
+  border-radius: 8px;
+  padding: 12px 14px;
+  margin-top: 16px;
+  margin-bottom: 20px;
+}
+
+.rules-highlight p {
+  color: #fff;
+  font-size: 0.82rem;
+  line-height: 1.7;
+}
+
+.rules-highlight strong {
+  color: #FF6B6B;
+}
+
+/* ============ 游戏页 ============ */
 #game-screen {
   padding: 15px 10px 10px;
   justify-content: center;
@@ -282,6 +376,7 @@ body {
   text-shadow: 0 0 12px rgba(255, 107, 107, 0.5);
 }
 
+/* ============ 通关页 ============ */
 #complete-screen {
   text-align: center;
   padding: 20px 16px;
@@ -411,6 +506,28 @@ body {
   text-shadow: 0 1px 2px rgba(0,0,0,0.5);
 }
 
+.redeem-reminder {
+  color: #FFE156;
+  font-size: 0.78rem;
+  margin-top: 14px;
+  max-width: 320px;
+  width: 100%;
+  line-height: 1.7;
+  background: rgba(212, 168, 83, 0.1);
+  border: 1px solid rgba(212, 168, 83, 0.4);
+  border-radius: 6px;
+  padding: 10px 14px;
+}
+
+.btn-group {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin-top: 18px;
+  width: 100%;
+  max-width: 280px;
+}
+
 .redeemed-notice, .gameover-notice {
   text-align: center;
   padding: 20px;
@@ -432,6 +549,19 @@ body {
   margin-bottom: 20px;
   font-size: 0.85rem;
   line-height: 1.6;
+}
+
+/* ============ 确认弹窗 ============ */
+.confirm-modal {
+  background: linear-gradient(145deg, #1A0A0A, #2A1515);
+  border-color: #FF6B6B;
+}
+.confirm-modal h2 {
+  color: #FF6B6B;
+  text-shadow: 0 0 12px rgba(255, 107, 107, 0.5);
+}
+.confirm-modal .btn-group {
+  gap: 12px;
 }
 
 .wave-decoration {
@@ -462,13 +592,46 @@ body {
 </head>
 <body>
 
+<!-- ============ 开场页 ============ -->
 <div id="start-screen" class="screen active">
   <div class="start-logo">TVP</div>
   <h1 class="game-title">记 忆 码 头</h1>
   <p class="game-subtitle">霓虹灯下的记忆挑战</p>
-  <button class="btn" onclick="startGame()">开 始 游 戏</button>
+  <button class="btn" onclick="showRules()">开 始 游 戏</button>
 </div>
 
+<!-- ============ 规则页 ============ -->
+<div id="rules-screen" class="screen">
+  <div class="rules-content">
+    <h2 class="rules-title">📜 游戏规则</h2>
+    <div class="rules-card">
+      <h3>🎮 玩法说明</h3>
+      <ul class="rules-list">
+        <li>翻开卡牌，找到两两配对的相同内容</li>
+        <li>共三关，难度依次递增</li>
+        <li>第一关：无时限，开局预览2秒</li>
+        <li>第二关：限时30秒，6对卡牌</li>
+        <li>第三关：限时60秒，8对卡牌</li>
+      </ul>
+    </div>
+    <div class="rules-card">
+      <h3>⚠️ 挑战规则</h3>
+      <ul class="rules-list">
+        <li>每位玩家仅有 <strong style="color:#FF6B6B;">3次</strong> 失败机会</li>
+        <li>超时即算一次失败</li>
+        <li>3次失败后游戏结束，无法兑奖</li>
+      </ul>
+    </div>
+    <div class="rules-highlight">
+      <p>🎁 <strong>通关三关即可获得兑奖资格</strong><br>
+      前往 7F 腾讯云TVP展位参与扭蛋机抽奖！<br><br>
+      ⚠️ <strong>每人仅限一次兑奖机会</strong>，通关后请<strong style="color:#FF6B6B;">先完成兑奖</strong>再进行其他操作！</p>
+    </div>
+    <button class="btn" onclick="beginGame()">我已了解，开始挑战</button>
+  </div>
+</div>
+
+<!-- ============ 游戏页 ============ -->
 <div id="game-screen" class="screen">
   <div class="game-header">
     <span class="level-title" id="level-title"></span>
@@ -481,6 +644,7 @@ body {
   <div class="card-grid" id="card-grid"></div>
 </div>
 
+<!-- ============ 过关弹窗 ============ -->
 <div class="modal-overlay" id="level-modal">
   <div class="modal">
     <h2 id="modal-title">🎉 过关！</h2>
@@ -489,6 +653,7 @@ body {
   </div>
 </div>
 
+<!-- ============ 失败弹窗 ============ -->
 <div class="modal-overlay" id="fail-modal">
   <div class="modal modal-fail">
     <h2 id="fail-title">⏱ 时间到！</h2>
@@ -497,8 +662,22 @@ body {
   </div>
 </div>
 
+<!-- ============ 确认重新开始弹窗 ============ -->
+<div class="modal-overlay" id="confirm-modal">
+  <div class="modal confirm-modal">
+    <h2>⚠️ 确认重新开始？</h2>
+    <p>重新开始后将<strong style="color:#FF6B6B;">无法再次兑奖</strong>！<br>请确保已完成兑奖操作。</p>
+    <div class="btn-group">
+      <button class="btn btn-sm" onclick="closeConfirm()">返回兑奖页面</button>
+      <button class="btn btn-sm btn-danger" onclick="confirmRestart()">确认，放弃兑奖资格</button>
+    </div>
+  </div>
+</div>
+
+<!-- ============ 通关 / 结束页 ============ -->
 <div id="complete-screen" class="screen"></div>
 
+<!-- ============ 海浪 ============ -->
 <div class="wave-decoration">
   <svg class="wave-svg" viewBox="0 0 1200 50" preserveAspectRatio="none">
     <path d="M0,25 C150,45 350,5 600,25 C850,45 1050,5 1200,25 L1200,50 L0,50 Z" fill="rgba(244,135,44,0.25)"/>
@@ -566,12 +745,33 @@ let state = {
   timeLeft: 0,
   totalPairs: 0,
   lives: MAX_LIVES,
-  canRedeem: false  // 是否有兑奖资格
+  canRedeem: false
 };
 
 function showScreen(id) {
   document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
   document.getElementById(id).classList.add('active');
+}
+
+// ============ 规则页 ============
+function showRules() {
+  if (isRedeemed()) {
+    showScreen('complete-screen');
+    renderRedeemedPage();
+    return;
+  }
+  showScreen('rules-screen');
+}
+
+function beginGame() {
+  if (isGameOver()) {
+    state.canRedeem = false;
+  } else {
+    state.canRedeem = true;
+  }
+  state.lives = MAX_LIVES;
+  state.currentLevel = 0;
+  startLevel(0);
 }
 
 // ============ 防重复兑奖 ============
@@ -598,7 +798,6 @@ function markRedeemed() {
   } catch(e) {}
 }
 
-// ============ 标记游戏失败（机会用完） ============
 function markGameOver() {
   localStorage.setItem('tvp_gameover', 'true');
   sessionStorage.setItem('tvp_gameover', 'true');
@@ -627,27 +826,7 @@ function checkIndexedDB(callback) {
   } catch(e) { callback(false); }
 }
 
-// ============ 开始游戏 ============
-function startGame() {
-  // 已兑过奖
-  if (isRedeemed()) {
-    showScreen('complete-screen');
-    renderRedeemedPage();
-    return;
-  }
-
-  // 判断是否有兑奖资格：首次玩且未失败过
-  if (isGameOver()) {
-    state.canRedeem = false;
-  } else {
-    state.canRedeem = true;
-  }
-
-  state.lives = MAX_LIVES;
-  state.currentLevel = 0;
-  startLevel(0);
-}
-
+// ============ 关卡 ============
 function startLevel(levelIndex) {
   const level = LEVELS[levelIndex];
   state.currentLevel = levelIndex;
@@ -684,13 +863,9 @@ function startLevel(levelIndex) {
 
   if (level.preview) {
     state.isLocked = true;
-    document.querySelectorAll('.card').forEach(c => {
-      c.classList.add('flipped');
-    });
+    document.querySelectorAll('.card').forEach(c => c.classList.add('flipped'));
     setTimeout(() => {
-      document.querySelectorAll('.card').forEach(c => {
-        c.classList.remove('flipped');
-      });
+      document.querySelectorAll('.card').forEach(c => c.classList.remove('flipped'));
       setTimeout(() => {
         state.isLocked = false;
         if (level.time) startTimer();
@@ -781,11 +956,9 @@ function handleCardClick(index, el) {
       setTimeout(() => {
         c1.el.classList.add('no-transition');
         c2.el.classList.add('no-transition');
-
         requestAnimationFrame(() => {
           c1.el.classList.remove('flipped');
           c2.el.classList.remove('flipped');
-
           requestAnimationFrame(() => {
             c1.el.classList.remove('no-transition');
             c2.el.classList.remove('no-transition');
@@ -811,7 +984,6 @@ function startTimer() {
   }, 1000);
 }
 
-// ============ 关卡失败 ============
 function handleLevelFail() {
   state.lives--;
   document.getElementById('lives-text').textContent = state.lives;
@@ -828,9 +1000,8 @@ function handleLevelFail() {
   }
 }
 
-// ============ 游戏结束（三次用完） ============
 function showGameOver() {
-  markGameOver();  // 标记已失败，永久失去兑奖资格
+  markGameOver();
   state.canRedeem = false;
 
   document.getElementById('complete-screen').innerHTML = `
@@ -845,24 +1016,19 @@ function showGameOver() {
   showScreen('complete-screen');
 }
 
-// ============ 失败后重新开始（无兑奖资格） ============
 function restartGame() {
-  state.canRedeem = false;  // 已失败过，不再有兑奖资格
+  state.canRedeem = false;
   state.lives = MAX_LIVES;
   state.currentLevel = 0;
   startLevel(0);
 }
 
-// ============ 过关 ============
 function levelComplete() {
   if (state.timer) { clearInterval(state.timer); state.timer = null; }
   if (state.currentLevel === LEVELS.length - 1) {
-    // 最终关通关
     if (state.canRedeem && !isRedeemed() && !isGameOver()) {
-      // 有资格且未兑过 → 显示兑奖
       showCompleteScreen();
     } else {
-      // 无资格 → 仅显示通关
       showReplayCompleteScreen();
     }
   } else {
@@ -882,7 +1048,7 @@ function retryLevel() {
   startLevel(state.currentLevel);
 }
 
-// ============ 首次通关（含兑奖） ============
+// ============ 首次通关（兑奖页） ============
 function showCompleteScreen() {
   markRedeemed();
   const deviceId = getDeviceId();
@@ -901,11 +1067,32 @@ function showCompleteScreen() {
         <div class="code-device">📱 设备已绑定</div>
       </div>
       <div class="warning-text">⚠️ 验证码持续变化，截图无效<br>每人仅限兑奖一次</div>
+      <div class="redeem-reminder">💡 请先前往展位完成兑奖后再点击下方按钮<br>点击"重新开始"后将无法再次兑奖</div>
+      <div class="btn-group">
+        <button class="btn btn-sm btn-danger" onclick="showConfirmRestart()">我已兑奖，重新开始</button>
+      </div>
     </div>
   `;
 
   showScreen('complete-screen');
   startCodeRefresh(deviceId);
+}
+
+// ============ 确认重新开始 ============
+function showConfirmRestart() {
+  document.getElementById('confirm-modal').classList.add('active');
+}
+
+function closeConfirm() {
+  document.getElementById('confirm-modal').classList.remove('active');
+}
+
+function confirmRestart() {
+  document.getElementById('confirm-modal').classList.remove('active');
+  state.canRedeem = false;
+  state.lives = MAX_LIVES;
+  state.currentLevel = 0;
+  startLevel(0);
 }
 
 // ============ 无资格通关 ============
