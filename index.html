@@ -36,7 +36,6 @@ body {
   justify-content: center;
 }
 
-/* ============ 开场页 ============ */
 #start-screen {
   text-align: center;
   padding: 20px;
@@ -87,7 +86,6 @@ body {
   transform: scale(0.96);
 }
 
-/* ============ 游戏页 ============ */
 #game-screen {
   padding: 15px 10px 10px;
   justify-content: center;
@@ -130,7 +128,6 @@ body {
   text-shadow: 0 0 8px rgba(255, 107, 107, 0.5);
 }
 
-/* ============ 卡牌网格 ============ */
 .card-grid {
   display: grid;
   gap: 8px;
@@ -146,7 +143,6 @@ body {
 .grid-3x4 { grid-template-columns: repeat(4, 1fr); }
 .grid-4x4 { grid-template-columns: repeat(4, 1fr); }
 
-/* ============ 卡牌（重写翻转逻辑） ============ */
 .card {
   aspect-ratio: 3 / 4;
   cursor: pointer;
@@ -170,13 +166,12 @@ body {
   transform: rotateY(180deg);
 }
 
-/* 匹配成功闪光，不涉及rotateY */
-.card.matched .card-inner {
-  transform: rotateY(180deg);
-}
-
 .card.matched {
   pointer-events: none;
+}
+
+.card.matched .card-inner {
+  transform: rotateY(180deg);
 }
 
 .card.match-glow .card-front {
@@ -193,7 +188,6 @@ body {
   border-color: #00FF88;
 }
 
-/* 不匹配时瞬间翻回（去掉transition） */
 .card.no-transition .card-inner {
   transition: none;
 }
@@ -244,13 +238,11 @@ body {
   max-width: 100%;
 }
 
-/* ============ 动画 ============ */
 @keyframes neon-glow {
   0%, 100% { opacity: 1; }
   50% { opacity: 0.85; }
 }
 
-/* ============ 弹窗 ============ */
 .modal-overlay {
   display: none;
   position: fixed;
@@ -285,13 +277,11 @@ body {
   line-height: 1.6;
   font-size: 0.85rem;
 }
-
 .modal-fail h2 {
   color: #FF6B6B;
   text-shadow: 0 0 12px rgba(255, 107, 107, 0.5);
 }
 
-/* ============ 通关页 ============ */
 #complete-screen {
   text-align: center;
   padding: 20px 16px;
@@ -338,7 +328,6 @@ body {
   font-size: 0.85rem;
 }
 
-/* ============ 验证码 ============ */
 .code-card {
   background: linear-gradient(145deg, #0A0E1A, #111B2E);
   border: 2px solid;
@@ -422,7 +411,6 @@ body {
   text-shadow: 0 1px 2px rgba(0,0,0,0.5);
 }
 
-/* ============ 已兑奖 / 失败 ============ */
 .redeemed-notice, .gameover-notice {
   text-align: center;
   padding: 20px;
@@ -446,7 +434,6 @@ body {
   line-height: 1.6;
 }
 
-/* ============ 海浪 ============ */
 .wave-decoration {
   position: fixed;
   bottom: 0;
@@ -475,7 +462,6 @@ body {
 </head>
 <body>
 
-<!-- ============ 开场页 ============ -->
 <div id="start-screen" class="screen active">
   <div class="start-logo">TVP</div>
   <h1 class="game-title">记 忆 码 头</h1>
@@ -483,7 +469,6 @@ body {
   <button class="btn" onclick="startGame()">开 始 游 戏</button>
 </div>
 
-<!-- ============ 游戏页 ============ -->
 <div id="game-screen" class="screen">
   <div class="game-header">
     <span class="level-title" id="level-title"></span>
@@ -496,7 +481,6 @@ body {
   <div class="card-grid" id="card-grid"></div>
 </div>
 
-<!-- ============ 过关弹窗 ============ -->
 <div class="modal-overlay" id="level-modal">
   <div class="modal">
     <h2 id="modal-title">🎉 过关！</h2>
@@ -505,19 +489,16 @@ body {
   </div>
 </div>
 
-<!-- ============ 失败弹窗（单关超时） ============ -->
 <div class="modal-overlay" id="fail-modal">
   <div class="modal modal-fail">
     <h2 id="fail-title">⏱ 时间到！</h2>
-    <p id="fail-text">剩余机会：<span id="fail-lives"></span> 次</p>
-    <button class="btn" id="fail-btn" onclick="retryLevel()">重 试</button>
+    <p id="fail-text"></p>
+    <button class="btn" id="fail-btn">重 试</button>
   </div>
 </div>
 
-<!-- ============ 通关 / 结束页 ============ -->
 <div id="complete-screen" class="screen"></div>
 
-<!-- ============ 海浪 ============ -->
 <div class="wave-decoration">
   <svg class="wave-svg" viewBox="0 0 1200 50" preserveAspectRatio="none">
     <path d="M0,25 C150,45 350,5 600,25 C850,45 1050,5 1200,25 L1200,50 L0,50 Z" fill="rgba(244,135,44,0.25)"/>
@@ -526,7 +507,6 @@ body {
 </div>
 
 <script>
-// ============ 显示名 ============
 const DISPLAY_NAMES = {
   '腾讯云TVP': '腾讯云TVP',
   '腾讯云开发者社区': '腾讯云开发者<br>社区',
@@ -538,7 +518,6 @@ const DISPLAY_NAMES = {
   'CloudQ': 'CloudQ'
 };
 
-// ============ 关卡配置 ============
 const LEVELS = [
   {
     name: '第一关「霓虹初亮」',
@@ -576,7 +555,6 @@ const CARD_COLORS = {
 
 const MAX_LIVES = 3;
 
-// ============ 游戏状态 ============
 let state = {
   currentLevel: 0,
   cards: [],
@@ -588,7 +566,7 @@ let state = {
   timeLeft: 0,
   totalPairs: 0,
   lives: MAX_LIVES,
-  isReplay: false
+  canRedeem: false  // 是否有兑奖资格
 };
 
 function showScreen(id) {
@@ -620,6 +598,21 @@ function markRedeemed() {
   } catch(e) {}
 }
 
+// ============ 标记游戏失败（机会用完） ============
+function markGameOver() {
+  localStorage.setItem('tvp_gameover', 'true');
+  sessionStorage.setItem('tvp_gameover', 'true');
+  const expires = new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toUTCString();
+  document.cookie = `tvp_gameover=true;expires=${expires};path=/`;
+}
+
+function isGameOver() {
+  if (localStorage.getItem('tvp_gameover') === 'true') return true;
+  if (sessionStorage.getItem('tvp_gameover') === 'true') return true;
+  if (document.cookie.indexOf('tvp_gameover=true') !== -1) return true;
+  return false;
+}
+
 function checkIndexedDB(callback) {
   try {
     const req = indexedDB.open('tvp_game', 1);
@@ -636,12 +629,20 @@ function checkIndexedDB(callback) {
 
 // ============ 开始游戏 ============
 function startGame() {
+  // 已兑过奖
   if (isRedeemed()) {
     showScreen('complete-screen');
     renderRedeemedPage();
     return;
   }
-  state.isReplay = false;
+
+  // 判断是否有兑奖资格：首次玩且未失败过
+  if (isGameOver()) {
+    state.canRedeem = false;
+  } else {
+    state.canRedeem = true;
+  }
+
   state.lives = MAX_LIVES;
   state.currentLevel = 0;
   startLevel(0);
@@ -683,16 +684,13 @@ function startLevel(levelIndex) {
 
   if (level.preview) {
     state.isLocked = true;
-    // 预览：直接显示正面（无动画）
     document.querySelectorAll('.card').forEach(c => {
       c.classList.add('flipped');
     });
     setTimeout(() => {
-      // 翻回时加上动画
       document.querySelectorAll('.card').forEach(c => {
         c.classList.remove('flipped');
       });
-      // 等翻回动画结束后解锁
       setTimeout(() => {
         state.isLocked = false;
         if (level.time) startTimer();
@@ -747,18 +745,15 @@ function shuffleArray(arr) {
   return a;
 }
 
-// ============ 翻牌 ============
 function handleCardClick(index, el) {
   if (state.isLocked) return;
   if (state.cards[index].matched) return;
   if (el.classList.contains('flipped')) return;
 
-  // 翻开
   el.classList.remove('no-transition');
   el.classList.add('flipped');
   state.flippedCards.push({ index, el });
 
-  // 两张都翻开了
   if (state.flippedCards.length === 2) {
     state.steps++;
     document.getElementById('steps-text').textContent = state.steps;
@@ -769,7 +764,6 @@ function handleCardClick(index, el) {
     const name2 = state.cards[c2.index].name;
 
     if (name1 === name2) {
-      // ✅ 匹配成功
       setTimeout(() => {
         state.cards[c1.index].matched = true;
         state.cards[c2.index].matched = true;
@@ -784,18 +778,14 @@ function handleCardClick(index, el) {
         }
       }, 300);
     } else {
-      // ❌ 不匹配 → 翻回
       setTimeout(() => {
-        // 先加no-transition让翻回瞬间完成（无动画）
         c1.el.classList.add('no-transition');
         c2.el.classList.add('no-transition');
 
-        // 下一帧移除flipped
         requestAnimationFrame(() => {
           c1.el.classList.remove('flipped');
           c2.el.classList.remove('flipped');
 
-          // 再下一帧恢复transition
           requestAnimationFrame(() => {
             c1.el.classList.remove('no-transition');
             c2.el.classList.remove('no-transition');
@@ -821,41 +811,44 @@ function startTimer() {
   }, 1000);
 }
 
-// ============ 关卡失败处理 ============
+// ============ 关卡失败 ============
 function handleLevelFail() {
   state.lives--;
   document.getElementById('lives-text').textContent = state.lives;
 
   if (state.lives <= 0) {
-    // 三次机会用完 → 游戏结束
     showGameOver();
   } else {
-    // 还有机会 → 显示失败弹窗
     document.getElementById('fail-title').textContent = '⏱ 时间到！';
     document.getElementById('fail-text').textContent = `剩余机会：${state.lives} 次`;
-    document.getElementById('fail-btn').textContent = '重 试';
-    document.getElementById('fail-btn').onclick = retryLevel;
+    const btn = document.getElementById('fail-btn');
+    btn.textContent = '重 试';
+    btn.onclick = retryLevel;
     document.getElementById('fail-modal').classList.add('active');
   }
 }
 
-// ============ 游戏结束（三次失败） ============
+// ============ 游戏结束（三次用完） ============
 function showGameOver() {
+  markGameOver();  // 标记已失败，永久失去兑奖资格
+  state.canRedeem = false;
+
   document.getElementById('complete-screen').innerHTML = `
     <div class="complete-content">
       <div class="gameover-notice">
         <h2>😢 很遗憾，挑战失败</h2>
         <p>三次机会已用完<br>感谢参与腾讯云TVP记忆码头！</p>
-        <button class="btn" onclick="restartGame()">重新开始</button>
+        <button class="btn" onclick="restartGame()">重新开始（仅娱乐）</button>
       </div>
     </div>
   `;
   showScreen('complete-screen');
 }
 
+// ============ 失败后重新开始（无兑奖资格） ============
 function restartGame() {
+  state.canRedeem = false;  // 已失败过，不再有兑奖资格
   state.lives = MAX_LIVES;
-  state.isReplay = false;
   state.currentLevel = 0;
   startLevel(0);
 }
@@ -864,10 +857,13 @@ function restartGame() {
 function levelComplete() {
   if (state.timer) { clearInterval(state.timer); state.timer = null; }
   if (state.currentLevel === LEVELS.length - 1) {
-    if (state.isReplay) {
-      showReplayCompleteScreen();
-    } else {
+    // 最终关通关
+    if (state.canRedeem && !isRedeemed() && !isGameOver()) {
+      // 有资格且未兑过 → 显示兑奖
       showCompleteScreen();
+    } else {
+      // 无资格 → 仅显示通关
+      showReplayCompleteScreen();
     }
   } else {
     document.getElementById('modal-title').textContent = '🎉 过关！';
@@ -886,7 +882,7 @@ function retryLevel() {
   startLevel(state.currentLevel);
 }
 
-// ============ 首次通关（兑奖） ============
+// ============ 首次通关（含兑奖） ============
 function showCompleteScreen() {
   markRedeemed();
   const deviceId = getDeviceId();
@@ -912,14 +908,14 @@ function showCompleteScreen() {
   startCodeRefresh(deviceId);
 }
 
-// ============ 再玩通关（无兑奖） ============
+// ============ 无资格通关 ============
 function showReplayCompleteScreen() {
   document.getElementById('complete-screen').innerHTML = `
     <div class="complete-content">
-      <h1 class="complete-title">🎊 再次通关 🎊</h1>
+      <h1 class="complete-title">🎊 通关成功 🎊</h1>
       <div class="info-card">
         <h3>🎉 挑战成功！</h3>
-        <p>你已经是记忆高手了！<br>但每人仅限兑奖一次哦～</p>
+        <p>你是记忆高手！<br>但本次无兑奖资格哦～</p>
       </div>
       <button class="btn" style="margin-top:20px;" onclick="replayGame()">再来一次</button>
     </div>
@@ -941,7 +937,7 @@ function renderRedeemedPage() {
 }
 
 function replayGame() {
-  state.isReplay = true;
+  state.canRedeem = false;
   state.lives = MAX_LIVES;
   state.currentLevel = 0;
   startLevel(0);
