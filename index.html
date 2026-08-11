@@ -172,6 +172,19 @@ body {
   background: rgba(0, 255, 136, 0.25);
 }
 
+.btn-staff {
+  border-color: #00E5FF;
+  color: #00E5FF;
+  background: rgba(0, 229, 255, 0.1);
+  box-shadow: 0 0 15px rgba(0, 229, 255, 0.25);
+  text-shadow: 0 0 8px rgba(0, 229, 255, 0.6);
+  font-size: 1rem;
+  padding: 12px 30px;
+}
+.btn-staff:active {
+  background: rgba(0, 229, 255, 0.3);
+}
+
 .btn-danger {
   border-color: #FF6B6B;
   color: #FF6B6B;
@@ -376,6 +389,24 @@ body {
   text-shadow: 0 0 12px rgba(255, 107, 107, 0.5);
 }
 
+.confirm-modal {
+  background: linear-gradient(145deg, #1A0A0A, #2A1515);
+  border-color: #FF6B6B;
+}
+.confirm-modal h2 {
+  color: #FF6B6B;
+  text-shadow: 0 0 12px rgba(255, 107, 107, 0.5);
+}
+
+.staff-confirm-modal {
+  background: linear-gradient(145deg, #0A1A2A, #102840);
+  border-color: #00E5FF;
+}
+.staff-confirm-modal h2 {
+  color: #00E5FF;
+  text-shadow: 0 0 12px rgba(0, 229, 255, 0.5);
+}
+
 #complete-screen {
   text-align: center;
   padding: 20px 16px;
@@ -505,24 +536,26 @@ body {
   text-shadow: 0 1px 2px rgba(0,0,0,0.5);
 }
 
-.redeem-reminder {
-  color: #FFE156;
-  font-size: 0.78rem;
-  margin-top: 14px;
+.staff-section {
+  margin-top: 20px;
+  padding-top: 16px;
+  border-top: 1px dashed rgba(0, 229, 255, 0.3);
   max-width: 320px;
   width: 100%;
-  line-height: 1.7;
-  background: rgba(212, 168, 83, 0.1);
-  border: 1px solid rgba(212, 168, 83, 0.4);
-  border-radius: 6px;
-  padding: 10px 14px;
+  text-align: center;
+}
+
+.staff-section .staff-label {
+  font-size: 0.7rem;
+  color: #888;
+  margin-bottom: 10px;
 }
 
 .btn-group {
   display: flex;
   flex-direction: column;
   gap: 10px;
-  margin-top: 18px;
+  margin-top: 12px;
   width: 100%;
   max-width: 280px;
   align-items: center;
@@ -551,13 +584,21 @@ body {
   line-height: 1.6;
 }
 
-.confirm-modal {
-  background: linear-gradient(145deg, #1A0A0A, #2A1515);
-  border-color: #FF6B6B;
+.success-notice {
+  text-align: center;
+  padding: 20px;
 }
-.confirm-modal h2 {
-  color: #FF6B6B;
-  text-shadow: 0 0 12px rgba(255, 107, 107, 0.5);
+.success-notice h2 {
+  color: #00FF88;
+  font-size: 1.4rem;
+  margin-bottom: 12px;
+  text-shadow: 0 0 12px rgba(0, 255, 136, 0.5);
+}
+.success-notice p {
+  color: #ccc;
+  margin-bottom: 20px;
+  font-size: 0.85rem;
+  line-height: 1.6;
 }
 
 .wave-decoration {
@@ -593,7 +634,6 @@ body {
     <div class="start-logo">TVP</div>
     <h1 class="game-title">记 忆 码 头</h1>
     <p class="game-subtitle">霓虹灯下的记忆挑战</p>
-    
     <div class="start-rules">
       <h3>📜 游戏规则</h3>
       <ul class="start-rules-list">
@@ -609,7 +649,6 @@ body {
         <p class="wechat-notice">📱 仅限微信扫码通关兑奖，其他浏览器通关无效</p>
       </div>
     </div>
-    
     <button class="btn" onclick="startGame()">开 始 挑 战</button>
   </div>
 </div>
@@ -642,13 +681,14 @@ body {
   </div>
 </div>
 
-<div class="modal-overlay" id="confirm-modal">
-  <div class="modal confirm-modal">
-    <h2>⚠️ 确认重新开始？</h2>
-    <p>重新开始后将<strong style="color:#FF6B6B;">无法再次兑奖</strong>！<br>请确保已前往展位完成兑奖。</p>
+<!-- 工作人员确认兑奖弹窗 -->
+<div class="modal-overlay" id="staff-confirm-modal">
+  <div class="modal staff-confirm-modal">
+    <h2>👨‍💼 工作人员确认</h2>
+    <p>确认该玩家已完成扭蛋机兑奖？<br>确认后该账号将无法再次兑奖。</p>
     <div class="btn-group">
-      <button class="btn btn-sm" onclick="closeConfirm()">返回兑奖页面</button>
-      <button class="btn btn-sm btn-danger" onclick="confirmRestart()">确认放弃兑奖资格</button>
+      <button class="btn btn-sm btn-staff" onclick="staffConfirmRedeem()">✅ 确认已兑奖</button>
+      <button class="btn btn-sm" onclick="closeStaffConfirm()">取消</button>
     </div>
   </div>
 </div>
@@ -730,12 +770,24 @@ function showScreen(id) {
   document.getElementById(id).classList.add('active');
 }
 
-// ============ 微信环境检测 ============
+// ============ 微信检测 ============
 function isWechat() {
   return /MicroMessenger/i.test(navigator.userAgent);
 }
 
-// ============ 防重复 ============
+// ============ 状态管理 ============
+// 通关状态（已通关但未兑奖）
+function markPassed() {
+  localStorage.setItem('tvp_passed', 'true');
+  localStorage.setItem('tvp_pass_time', Date.now().toString());
+  sessionStorage.setItem('tvp_passed', 'true');
+}
+
+function isPassed() {
+  return localStorage.getItem('tvp_passed') === 'true' || sessionStorage.getItem('tvp_passed') === 'true';
+}
+
+// 已兑奖状态（工作人员确认后）
 function isRedeemed() {
   if (localStorage.getItem('tvp_redeemed') === 'true') return true;
   if (sessionStorage.getItem('tvp_redeemed') === 'true') return true;
@@ -758,6 +810,7 @@ function markRedeemed() {
   } catch(e) {}
 }
 
+// 失败状态
 function markGameOver() {
   localStorage.setItem('tvp_gameover', 'true');
   sessionStorage.setItem('tvp_gameover', 'true');
@@ -786,10 +839,16 @@ function checkIndexedDB(callback) {
   } catch(e) { callback(false); }
 }
 
+// ============ 开始游戏 ============
 function startGame() {
   if (isRedeemed()) {
     showScreen('complete-screen');
     renderRedeemedPage();
+    return;
+  }
+  // 已通关未兑奖 → 直接显示兑奖页
+  if (isPassed() && !isRedeemed()) {
+    showRedeemScreen();
     return;
   }
   state.canRedeem = !isGameOver();
@@ -997,11 +1056,10 @@ function restartGame() {
 function levelComplete() {
   if (state.timer) { clearInterval(state.timer); state.timer = null; }
   if (state.currentLevel === LEVELS.length - 1) {
-    // 最终关通关 - 检查所有条件
     if (state.canRedeem && !isRedeemed() && !isGameOver() && isWechat()) {
-      showCompleteScreen();
+      markPassed(); // 标记通关（未兑奖）
+      showRedeemScreen();
     } else if (state.canRedeem && !isRedeemed() && !isGameOver() && !isWechat()) {
-      // 非微信环境
       showNonWechatScreen();
     } else {
       showNoRedeemCompleteScreen();
@@ -1023,9 +1081,8 @@ function retryLevel() {
   startLevel(state.currentLevel);
 }
 
-// ============ 首次通关（微信环境，兑奖） ============
-function showCompleteScreen() {
-  markRedeemed();
+// ============ 兑奖页面（核心页面） ============
+function showRedeemScreen() {
   const deviceId = getDeviceId();
 
   document.getElementById('complete-screen').innerHTML = `
@@ -1042,9 +1099,9 @@ function showCompleteScreen() {
         <div class="code-device">📱 设备已绑定</div>
       </div>
       <div class="warning-text">⚠️ 验证码持续变化，截图无效<br>每人仅限兑奖一次</div>
-      <div class="redeem-reminder">💡 请先前往展位完成兑奖！<br>点击下方按钮后将无法再次兑奖</div>
-      <div class="btn-group">
-        <button class="btn btn-sm btn-green" onclick="showConfirmRestart()">✅ 我已兑奖，重新开始</button>
+      <div class="staff-section">
+        <p class="staff-label">—— 以下由工作人员操作 ——</p>
+        <button class="btn btn-staff" onclick="showStaffConfirm()">👨‍💼 确认兑奖</button>
       </div>
     </div>
   `;
@@ -1053,7 +1110,39 @@ function showCompleteScreen() {
   startCodeRefresh(deviceId);
 }
 
-// ============ 非微信环境通关 ============
+// ============ 工作人员确认兑奖 ============
+function showStaffConfirm() {
+  document.getElementById('staff-confirm-modal').classList.add('active');
+}
+
+function closeStaffConfirm() {
+  document.getElementById('staff-confirm-modal').classList.remove('active');
+}
+
+function staffConfirmRedeem() {
+  document.getElementById('staff-confirm-modal').classList.remove('active');
+  markRedeemed(); // 正式标记为已兑奖
+  showRedeemSuccessScreen();
+}
+
+// ============ 兑奖成功页 ============
+function showRedeemSuccessScreen() {
+  // 停止验证码刷新
+  codeIntervals.forEach(id => clearInterval(id));
+  codeIntervals = [];
+
+  document.getElementById('complete-screen').innerHTML = `
+    <div class="complete-content">
+      <div class="success-notice">
+        <h2>✅ 兑奖成功！</h2>
+        <p>感谢参与腾讯云TVP记忆码头活动！<br>祝您活动愉快 🎉</p>
+        <button class="btn" onclick="replayGame()">再玩一次（仅娱乐）</button>
+      </div>
+    </div>
+  `;
+}
+
+// ============ 非微信环境 ============
 function showNonWechatScreen() {
   document.getElementById('complete-screen').innerHTML = `
     <div class="complete-content">
@@ -1105,22 +1194,6 @@ function renderRedeemedPage() {
   `;
 }
 
-function showConfirmRestart() {
-  document.getElementById('confirm-modal').classList.add('active');
-}
-
-function closeConfirm() {
-  document.getElementById('confirm-modal').classList.remove('active');
-}
-
-function confirmRestart() {
-  document.getElementById('confirm-modal').classList.remove('active');
-  state.canRedeem = false;
-  state.lives = MAX_LIVES;
-  state.currentLevel = 0;
-  startLevel(0);
-}
-
 function replayGame() {
   state.canRedeem = false;
   state.lives = MAX_LIVES;
@@ -1128,6 +1201,7 @@ function replayGame() {
   startLevel(0);
 }
 
+// ============ 设备指纹 ============
 function getDeviceId() {
   let stored = localStorage.getItem('tvp_device_id');
   if (stored) return stored;
@@ -1193,12 +1267,21 @@ function startCodeRefresh(deviceId) {
   }, 10000));
 }
 
+// ============ 初始化 ============
 (function init() {
+  // 优先级：已兑奖 > 已通关未兑奖 > 正常开始
   if (isRedeemed()) {
     showScreen('complete-screen');
     renderRedeemedPage();
     return;
   }
+  // 已通关但未兑奖 → 恢复兑奖页面
+  if (isPassed()) {
+    showScreen('complete-screen');
+    showRedeemScreen();
+    return;
+  }
+  // 检查 IndexedDB
   checkIndexedDB((redeemed) => {
     if (redeemed) {
       localStorage.setItem('tvp_redeemed', 'true');
